@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, ScrollView } from 'react-native'
 import Timer from './timer'
 import timerStyles from '../../styles/timer-styles'
+const TimerModel = require('../../models/timer-model')
 
 export default class Timers extends Component {
   constructor(props) {
@@ -13,18 +14,21 @@ export default class Timers extends Component {
   }
 
   componentDidMount() {
-    //add all timers
+    TimerModel.getAll()
+      .then(timers => this.setState({ timers }))
   } 
 
   
   addTimer() {
-    this.setState({ timers: [
-      <Timer
-        key={this.state.timers.length}
-        active={false}
-        className='timer'
-      />,
-      ...this.state.timers ]})
+    TimerModel.create({
+      id: (new Date()).getTime(),
+      active: false,
+      name: 'New Timer',
+      time: new Date(0,0,0,0,0,0),
+    })
+      .then(newTimer => {
+        this.setState({ timers: [newTimer, ...this.state.timers ]})
+      })
   }
   
   render() {
