@@ -1,19 +1,5 @@
 import React from 'react'
 import { Text } from 'react-native'
-import Timer from '../components/timers/timer'
-
-const formatTimer = (data) => {
-  return (
-    <Timer
-      key={data.id}
-      name={data.name}
-      active={data.active}
-      time={{
-        time: data.time
-      }}
-    /> 
-  )
-}
 
 const timeToStr = (timeObj) => {
   let result = ''
@@ -35,4 +21,4 @@ const timeToStr = (timeObj) => {
   return result
 }
 
-module.exports = { formatTimer, timeToStr }
+module.exports = { timeToStr }

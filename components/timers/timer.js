@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, Modal, TextInput, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { Text, View, TextInput, TouchableOpacity, Button } from 'react-native'
+import Modal from 'react-native-modal'
 import timerStyles from '../../styles/timer-styles'
 import { timeToStr } from '../../helpers/timer-helper'
 const TimerModel = require('../../models/timer-model')
@@ -46,6 +47,11 @@ export default class Timer extends Component {
     this.setState({ time: new Date(this.state.time.getTime() + 1000) })
   }
 
+  deleteTimer() {
+    this.setState({ options: false })
+    this.props.onDestroy(this.props.id)
+  }
+
   name() {
     if (this.state.editing) {
       return (
@@ -68,30 +74,23 @@ export default class Timer extends Component {
   options() {
     return (
       <Modal
-        visible={this.state.options}
-        style={{height: 50, width: 50}}
+        isVisible={this.state.options}
+        onBackdropPress={() => this.toggleOptions()}
+        style={timerStyles.options}
       >
-        <TouchableHighlight
+        <Button
           onPress={() => this.toggleEditing()}
-        >
-          <Text>Edit</Text>
-        </TouchableHighlight>
-        
-        <TouchableHighlight
+          title='Edit'
+          color='white'
+        />
+
+        <Button
           onPress={() => this.deleteTimer()}
-        >
-          <Text>Delete</Text>
-        </TouchableHighlight>
+          title='Delete'
+          color='white'
+        />
       </Modal>
     )
-  }
-
-  selectOption(val) {
-    if (val === 'edit') {
-      this.toggleEditing()
-    } else if (val === 'delete') {
-      //delete timer 
-    }
   }
 
   render() {
