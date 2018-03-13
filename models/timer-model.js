@@ -16,9 +16,9 @@ const create = async (data) => {
 
 const destroy = async (id) => {
   let realm = await Realm.open({ schema: [TimerSchema] })
-  const timer = realm.objects('Timer').filtered(`id = ${id}`)
-  realm.write(() => realm.delete(timer))
-  return timer
+  const timers = realm.objects('Timer').filtered(`id = ${id}`)
+  realm.write(() => realm.delete(timers[0]))
+  return timers[0]
 }
 
 module.exports = { getAll, create, destroy }

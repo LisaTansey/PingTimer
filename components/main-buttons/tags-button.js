@@ -10,9 +10,23 @@ export default class TagsButton extends Component {
     }
   }
 
+  modal() {
+
+  }
+
   render() {
     return (
-      <Text>Tags</Text>
+      <TouchableHighlight
+        onPress={() => this.setState({active:true})}
+      >
+        <View>
+          { this.modal() }
+          <Image
+            style={mainStyles.icon}
+            source={require('../../assets/list.png')}
+          />
+        </View>
+      </TouchableHighlight>
     )
   }
 }

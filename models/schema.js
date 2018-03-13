@@ -11,4 +11,13 @@ const TimerSchema = {
   },
 }
 
+const SettingsSchema = {
+  name: 'Settings',
+  primaryKey: 'name',
+  properties: {
+    name: 'string',
+    value: 'string',
+  }
+}
+
 module.exports = { TimerSchema }

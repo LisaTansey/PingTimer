@@ -10,9 +10,23 @@ export default class SettingsButton extends Component {
     }
   }
 
+  modal() {
+
+  }
+
   render() {
     return (
-      <Text>Settings</Text>
+      <TouchableHighlight
+        onPress={() => this.setState({active:true})}
+      >
+        <View>
+          { this.modal() }
+          <Image
+            style={mainStyles.icon}
+            source={require('../../assets/settings.png')}
+          />
+        </View>
+      </TouchableHighlight>
     )
   }
 }

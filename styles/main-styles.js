@@ -9,7 +9,7 @@ export default mainStyles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.appSecondary,
+    backgroundColor: Colors.appPrimary,
   },
 
   panel: {

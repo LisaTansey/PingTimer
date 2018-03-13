@@ -10,9 +10,27 @@ export default class HelpButton extends Component {
     }
   }
 
+  toggleActive() {
+
+  }
+
+  modal() {
+
+  }
+
   render() {
     return (
-      <Text>Help</Text>
+      <TouchableHighlight
+        onPress={this.toggleActive.bind(this)}
+      >
+        <View>
+          { this.modal() }
+          <Image
+            style={mainStyles.icon}
+            source={require('../../assets/question-mark.png')}
+          />
+        </View>
+      </TouchableHighlight>
     )
   }
 }

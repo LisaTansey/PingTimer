@@ -13,26 +13,27 @@ export default timerStyles = StyleSheet.create({
   timer: {
     height: '30%',
     width: '50%',
-    backgroundColor: Colors.appTertiary,
+    backgroundColor: Colors.appSecondary,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 13,
   },
 
   time: {
-    backgroundColor: 'red',
   },
 
   timeText: {
     fontSize: 30,
-    color: 'black',
+    color: Colors.appTertiary,
   },
 
   nameBox: {
-    marginBottom: '10%',
+    marginBottom: '13%',
   },
 
   name: {
-    fontSize: 20,
+    fontSize: 23,
+    color: Colors.appTertiary,
   },
 
   options: {

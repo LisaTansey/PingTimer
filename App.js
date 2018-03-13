@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import mainStyles from './styles/main-styles'
-import { Text, View } from 'react-native'
+import { Text, View, Image } from 'react-native'
 import PingSettingsButton from './components/main-buttons/ping-settings-button'
 import HelpButton from './components/main-buttons/help-button'
 import TagsButton from './components/main-buttons/tags-button'
@@ -16,6 +16,10 @@ export default class App extends Component {
   render() {
     return (
       <View style={mainStyles.app}>
+        <Image
+          source={require('./assets/background1.png')}
+          style={{ opacity: 0.2, position: 'absolute', height: '100%', width: '100%' }}
+        />
 
         <View style={mainStyles.panel}>
           <View style={mainStyles.left}>
