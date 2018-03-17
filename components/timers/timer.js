@@ -77,6 +77,8 @@ export default class Timer extends Component {
         isVisible={this.state.options}
         onBackdropPress={() => this.toggleOptions()}
         style={timerStyles.options}
+        animationIn='fadeIn'
+        animationOut='fadeOut'
       >
         <Button
           onPress={() => this.toggleEditing()}

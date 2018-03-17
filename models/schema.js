@@ -20,4 +20,4 @@ const SettingsSchema = {
   }
 }
 
-module.exports = { TimerSchema }
+module.exports = { schema: [TimerSchema, SettingsSchema] }
