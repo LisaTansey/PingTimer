@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableHighlight, Image, Picker } from 'react-native'
+import { Text, View, TouchableHighlight, Image, Picker, Button } from 'react-native'
 import Modal from 'react-native-modal'
 import mainStyles from '../../styles/main-styles'
 import modalStyles from '../../styles/modal-styles'
@@ -17,10 +17,21 @@ export default class PingSettingsButton extends Component {
   componentDidMount() {
     Settings.getPingInterval()
       .then(interval => this.setState({ interval }))
+      .catch(err => alert(err))
   }
 
   nextPing() {
-    return '1:00 PM'
+    let utc_min = Date.now() / 60000
+    let last_interval = utc_min - (utc_min % parseInt(this.state.interval)) 
+    let date_next = new Date(0)
+    date_next.setUTCMinutes(last_interval + parseInt(this.state.interval))
+    return `${date_next.getHours() % 12}:${date_next.getMinutes()}`
+  }
+  
+  setInterval() {
+    Settings.setPingInterval(this.state.interval)
+      .then(res => this.setState({editing:false}))
+      .catch(err => alert(err))
   }
 
   modal() {
@@ -42,7 +53,7 @@ export default class PingSettingsButton extends Component {
           </Text>
 
           <Picker
-            selectedValue={'15'} 
+            selectedValue={this.state.interval} 
             onValueChange={(interval, ind) => this.setState({interval})}
           >
             <Picker.Item label='5 min' value='5' />
@@ -56,6 +67,13 @@ export default class PingSettingsButton extends Component {
             <Picker.Item label='5 hrs' value='300' />
             <Picker.Item label='10 hrs' value='600' />
           </Picker>
+        </View>
+        
+        <View>
+          <Button
+            title='Set Interval'
+            onPress={this.setInterval.bind(this)}
+          />
         </View>
       </Modal>
     )

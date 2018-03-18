@@ -7,11 +7,21 @@ const getPingInterval = async () => {
   if (pingSetting) {
     return parseInt(pingSetting.value)
   } else {
-    return await setPingInterval()
+    return await initializePingInterval()
   }
 }
 
-const setPingInterval = async (time='15') => {
+const setPingInterval = async (time) => {
+  let realm = await Realm.open({ schema })
+  realm.write(() => {
+    realm.create('Settings', {
+      name: 'pingInterval',
+      value: time
+    }, true)
+  })
+}
+
+const initializePingInterval = async (time='15') => {
   let realm = await Realm.open({ schema })
   realm.write(() => {
     realm.create('Settings', {
@@ -22,4 +32,4 @@ const setPingInterval = async (time='15') => {
   return time
 }
 
-module.exports = { getPingInterval }
+module.exports = { getPingInterval, setPingInterval }
