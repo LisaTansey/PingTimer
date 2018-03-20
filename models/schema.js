@@ -5,9 +5,9 @@ const TimerSchema = {
   primaryKey: 'id',
   properties: {
     id: 'int',
-    name: 'string',
-    active: 'bool',
     time: 'date',
+    active: 'bool',
+    name: 'string',
   },
 }
 
