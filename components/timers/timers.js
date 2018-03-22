@@ -39,14 +39,12 @@ export default class Timers extends Component {
   }
   
   destroyTimer(id) {
+    let timer = this.state.timers.find(timer => (timer.id === id))
+    let ind = this.state.timers.indexOf(timer)
+    let timers = this.state.timers
+    timers.splice(ind, 1)
+    this.setState({ timers })
     TimerModel.destroy(id)
-      .then(data => {
-        let timer = this.state.timers.find(timer => (timer.id === id))
-        let ind = this.state.timers.indexOf(timer)
-        let timers = this.state.timers
-        timers.splice(ind, 1)
-        this.setState({ timers })
-      })
   }
 
   formatTimer(timer) {
@@ -66,9 +64,12 @@ export default class Timers extends Component {
 
   render() {
     return (
-      <View style={timerStyles.timers}>
+      <ScrollView 
+        style={timerStyles.timers}
+        contentContainerStyle={timerStyles.thisShit}
+      >
         { this.state.timers }
-      </View>
+      </ScrollView>
     )
   }
 }

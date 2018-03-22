@@ -52,4 +52,16 @@ const addTime = async (id, time) => {
   }
 }
 
-module.exports = { getAll, get, create, destroy, toggleActive, addTime, }
+const update = async (id, key, value) => {
+  try {
+    let realm = await Realm.open({ schema })
+    let data = {}
+    data.id = id
+    data[key] = value
+    realm.write(() => realm.create('Timer', data, true)) 
+  } catch (e) {
+    alert(e)
+  }
+}
+
+module.exports = { getAll, get, create, destroy, toggleActive, addTime, update, }

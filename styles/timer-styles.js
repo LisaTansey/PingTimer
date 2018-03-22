@@ -4,19 +4,22 @@ import Colors from './colors'
 export default timerStyles = StyleSheet.create({
 
   timers: {
-    height: '80%',
-    width: '90%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: '61%',
+    width: '100%',
   },
 
   timer: {
-    height: '30%',
-    width: '50%',
+    height: 145,
+    width: 124.75,
     backgroundColor: Colors.appSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 13,
+  },
+
+  thisShit: {
+    height: '100%',
+    flexDirection: 'row',
   },
 
   time: {

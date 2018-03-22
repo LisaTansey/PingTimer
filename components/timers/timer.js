@@ -63,13 +63,18 @@ export default class Timer extends Component {
     clearInterval(this.state.timerTask) 
   }
 
+  async submitName() {
+    await TimerModel.update(this.props.id, 'name', this.state.name)
+    this.setState({editing:false})
+  }
+
   name() {
     if (this.state.editing) {
       return (
         <TextInput
           style={timerStyles.name}
           onChangeText={(name) => this.setState({ name })}
-          onEndEditing={() => this.setState({editing:false})}
+          onEndEditing={() => this.submitName()}
           value={this.state.name}
         />
       )
@@ -110,7 +115,7 @@ export default class Timer extends Component {
     return (
       <TouchableOpacity 
         onPress={() => this.toggleActive()}
-        onLongPress={(event) => this.toggleOptions(event)}
+        onLongPress={() => this.toggleOptions()}
         style={timerStyles.timer}>
       >
         { this.options() }
