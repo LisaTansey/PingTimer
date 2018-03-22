@@ -32,4 +32,27 @@ const initializePingInterval = async (time='15') => {
   return time
 }
 
-module.exports = { getPingInterval, setPingInterval }
+const getLayout = async () => {
+
+}
+
+const setLayout = async (layout) => {
+
+}
+
+const getColors = async () => {
+
+}
+
+const setColors = async (colorScheme) => {
+
+}
+
+module.exports = { 
+  getPingInterval, 
+  setPingInterval, 
+  getLayout,
+  setLayout,
+  getColors,
+  setColors,
+}

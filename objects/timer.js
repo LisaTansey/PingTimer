@@ -14,7 +14,9 @@ export default class TimerObject {
   async stop(id) {
     this.stopTime = Date.now()
     let difference = Math.abs(this.stopTime - this.startTime)
-    TimerModel.addTime(id, difference)
+    await TimerModel.addTime(id, difference)
+    this.startTime = null
+    this.stopTime = null
   }
 
 }

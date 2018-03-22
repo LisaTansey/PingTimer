@@ -8,18 +8,18 @@ export default timerStyles = StyleSheet.create({
     width: '100%',
   },
 
+  timersInner: {
+    height: '100%',
+    flexDirection: 'row',
+  },
+
   timer: {
     height: 145,
-    width: 124.75,
+    width: 124,
     backgroundColor: Colors.appSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 13,
-  },
-
-  thisShit: {
-    height: '100%',
-    flexDirection: 'row',
   },
 
   time: {

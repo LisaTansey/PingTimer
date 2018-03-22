@@ -2,28 +2,45 @@ import React, { Component } from 'react'
 import { Text, View, ScrollView } from 'react-native'
 import Timer from './timer'
 import timerStyles from '../../styles/timer-styles'
+import TimerRows from '../../objects/timer-rows'
 const TimerModel = require('../../models/timer-model')
+const SettingsModel = require('../../models/settings-model')
+const Dimensions = require('Dimensions')
 
 export default class Timers extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      timers: [],
-      layout: this.props.layout,
-      //enum layout
+      timers: new TimerRows(Dimensions.get('window')),
     }
   }
 
-  componentDidMount() {
-    TimerModel.getAll()
-      .then(data => {
-        let timers = []
-        data.forEach(timer => {
-          timers.push(this.formatTimer(timer))
-        })
-        this.setState({ timers })
-      })
+  async componentDidMount() {
+    let data = await TimerModel.getAll()
+    let formattedData = []
+    data.forEach(timer => {
+      formattedData.push(this.formatTimer(timer))
+    })
+    let timers = this.state.timers.initializeRows(formattedData) 
+
+    let layout = await SettingsModel.getLayout()
+    let colorScheme = await SettingsModel.getColors()
+    timers.setLayout(layout)
+    timers.setColors(colorScheme)
+
+    this.setState({ timers })
+    Dimensions.addEventListener('change', () => {
+      let timers = this.state.timers.swapOrientation()
+      this.setState({ timers })
+    })
   } 
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', () => {
+      let timers = this.state.timers.swapOrientation
+      this.setState({ timers })
+    })
+  }
 
   addTimer() {
     TimerModel.create({
@@ -34,16 +51,20 @@ export default class Timers extends Component {
     })
       .then(data => { 
         const newTimer = this.formatTimer(data)
-        this.setState({ timers: [newTimer, ...this.state.timers ]})
+        let timers = this.state.timers.addTimer(newTimer)
+        this.setState({ timers })
+        //this.setState({ timers: [newTimer, ...this.state.timers ]})
       })
   }
   
   destroyTimer(id) {
-    let timer = this.state.timers.find(timer => (timer.id === id))
+    let timers = TimerRows.deleteTimer(id)
+    this.setState({ timers })
+    /*let timer = this.state.timers.find(timer => (timer.id === id))
     let ind = this.state.timers.indexOf(timer)
     let timers = this.state.timers
     timers.splice(ind, 1)
-    this.setState({ timers })
+    this.setState({ timers })*/
     TimerModel.destroy(id)
   }
 
@@ -68,7 +89,7 @@ export default class Timers extends Component {
         style={timerStyles.timers}
         contentContainerStyle={timerStyles.thisShit}
       >
-        { this.state.timers }
+        { this.state.timers.renderTimers() }
       </ScrollView>
     )
   }
