@@ -45,7 +45,7 @@ export default class TimerRows {
   }
 
   deleteTimer(id) {
-
+    //let timer =
     return this
   }
 

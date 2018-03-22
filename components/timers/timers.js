@@ -23,10 +23,8 @@ export default class Timers extends Component {
     })
     let timers = this.state.timers.initializeRows(formattedData) 
 
-    let layout = await SettingsModel.getLayout()
-    let colorScheme = await SettingsModel.getColors()
-    timers.setLayout(layout)
-    timers.setColors(colorScheme)
+    timers.setLayout(this.props.layout)
+    timers.setColors(this.props.colorScheme)
 
     this.setState({ timers })
     Dimensions.addEventListener('change', () => {
@@ -35,6 +33,10 @@ export default class Timers extends Component {
     })
   } 
 
+  componentWillReceiveProps(nextProps) {
+     
+  }
+
   componentWillUnmount() {
     Dimensions.removeEventListener('change', () => {
       let timers = this.state.timers.swapOrientation
@@ -42,19 +44,11 @@ export default class Timers extends Component {
     })
   }
 
-  addTimer() {
-    TimerModel.create({
-      id: (new Date()).getTime(),
-      active: false,
-      name: 'New Timer',
-      time: new Date(0,0,0,0,0,0),
-    })
-      .then(data => { 
-        const newTimer = this.formatTimer(data)
-        let timers = this.state.timers.addTimer(newTimer)
-        this.setState({ timers })
-        //this.setState({ timers: [newTimer, ...this.state.timers ]})
-      })
+  async addTimer() {
+    let data = await TimerModel.create(this._blankTimer())
+    const newTimer = this.formatTimer(data)
+    let timers = this.state.timers.addTimer(newTimer)
+    this.setState({ timers })
   }
   
   destroyTimer(id) {
@@ -93,4 +87,14 @@ export default class Timers extends Component {
       </ScrollView>
     )
   }
+
+  _blankTimer() {
+    return {
+      id: (new Date()).getTime(),
+      active: false,
+      name: 'New Timer',
+      time: new Date(0,0,0,0,0,0),
+    }
+  }
+
 }

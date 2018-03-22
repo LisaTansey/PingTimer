@@ -7,15 +7,31 @@ import TagsButton from './components/main-buttons/tags-button'
 import SettingsButton from './components/main-buttons/settings-button'
 import NewTimerButton from './components/main-buttons/new-timer-button'
 import Timers from './components/timers/timers.js'
+const SettingsModel = require('./models/settings-model')
 
 export default class App extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      colors: {
+        primary: 'white',
+        secondary: 'white',
+        tertiary: 'white',
+      },
+    }
   }
   
+  async componentDidMount() {
+    const colors = await SettingsModel.getColors()
+    const layout = await SettingsModel.getLayout()
+    this.setState({ colors, layout })
+  }
+
   render() {
     return (
-      <View style={mainStyles.app}>
+      <View 
+        style={mainStyles.app}
+      >
         <Image
           source={require('./assets/background1.png')}
           style={{ opacity: 0.2, position: 'absolute', height: '100%', width: '100%' }}
@@ -31,7 +47,11 @@ export default class App extends Component {
           </View>
         </View>
 
-        <Timers ref='timers' />
+        <Timers 
+          ref='timers' 
+          colors={this.state.colors}
+          layout={this.state.layout}
+        />
 
         <View style={mainStyles.panel}>
           <View style={mainStyles.left}>
