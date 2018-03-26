@@ -17,6 +17,8 @@ export default class Timer extends Component {
       timerTask: null,
       options: false,
       editing: false,
+      row: parseInt(this.props.row),
+      column: parseInt(this.props.column),
     }
   }
 
@@ -50,7 +52,7 @@ export default class Timer extends Component {
 
   deleteTimer() {
     this.setState({ options: false })
-    this.props.onDestroy(this.props.id)
+    this.props.onDestroy(this.props.id, this.state.row, this.state.column)
   }
 
   startTiming() {

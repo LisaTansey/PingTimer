@@ -21,17 +21,14 @@ export default class Timers extends Component {
 
   async componentDidMount() {
     let data = await TimerModel.getAll()
-    let timers = []
-    data.forEach(timer => {
-      timers.push(this.formatTimer(timer))
-    })
 
-    this.setState({ timers, 
+    this.setState({ 
       layout: this.props.layout, 
       colorScheme: this.props.colorScheme 
     }) 
-
-    this.setState({ rows: this.initializeRows() })
+    
+    let rows = this.initializeRows(data)
+    this.setState({ rows })
     this.setSwapListener()
   } 
 
@@ -57,14 +54,24 @@ export default class Timers extends Component {
     })
   }
 
-  initializeRows(timers=this.state.timers) {
+  initializeRows(timers=this.state.timers, alreadyFormatted=false) {
     let visibleNumber = this.state.visibleNumber
     let rows = []
     for (i = 0; i < timers.length; i += visibleNumber) {
+      let formattedTimers = []
+      if (!alreadyFormatted) {
+        timers.slice(i, (i + visibleNumber)).forEach((timer, ind) => {
+          formattedTimers.push(
+            this.formatTimer(timer, rows.length, ind)
+          )
+        })
+      } else {
+        formattedTimers = timers.slice(i, i + visibleNumber)
+      }
       let row = <TimerRow 
           visibleNumber={visibleNumber.toString()}
         >
-          { timers.slice(i, (i + visibleNumber)) }
+          { formattedTimers }
         </TimerRow>
       rows.push(row)
     }
@@ -80,26 +87,25 @@ export default class Timers extends Component {
   }
 
   async addTimer() {
-    let data = await TimerModel.create(this._blankTimer())
-    const newTimer = this.formatTimer(data)
+    let newTimer = await TimerModel.create(this._blankTimer())
     this.setState({ timers: [...this.state.timers, newTimer ]})
     this.addToEnd(newTimer)
   }
 
   addToEnd(timer) {
     let lastRow = this.state.rows[this.state.rows.length - 1]
-    if (lastRow.props.children.length >= this.state.visibleNumber) {
+    if (!lastRow || lastRow.props.children.length >= this.state.visibleNumber) {
       this.addNewRow(timer)
     } else { 
       this.addToLastRow(timer)
     }
   }
 
-  addNewRow(timers=[]) {
+  addNewRow(timer) {
     let rows = this.state.rows
     rows.push(
       <TimerRow visibleNumber={this.state.visibleNumber.toString()}>
-        { timers }
+        { this.formatTimer(timer, rows.length, 0) }
       </TimerRow>
     )
     this.setState({ rows })
@@ -109,7 +115,8 @@ export default class Timers extends Component {
     let rows = this.state.rows
     let lastRow = rows[rows.length -1]
     let lastChildren = React.Children.toArray(lastRow.props.children)
-    lastChildren.push(timer) 
+    let newTimer = this.formatTimer(timer, rows.length - 1, lastChildren.length)
+    lastChildren.push(newTimer) 
     rows[this.state.rows.length - 1] = <TimerRow visibleNumber={this.state.visibleNumber}>
       { lastChildren }
       </TimerRow>
@@ -117,16 +124,20 @@ export default class Timers extends Component {
   }
 
   destroyTimer(id, row, column) {
-    let rows = this.state.rows
-    let newTimers = rows.splice(row)
-    let flattendTimers = newTimers.map(row => row.props.children).flatten()
-    flattenedTimers.pop(column)
-    let newRows = this.initializeRows(flattenedTimers)
+    let newTimers = this.state.rows.splice(row)
+    let flattenedTimers = []
+    newTimers.forEach(prevRow => {
+      prevRow.props.children.forEach(prevTimer => {
+        flattenedTimers.push(prevTimer)
+      })
+    })
+    flattenedTimers.splice(column, 1)
+    let newRows = this.initializeRows(flattenedTimers, true)
     this.setState({ rows: [...this.state.rows, ...newRows] }) 
     TimerModel.destroy(id)
   }
 
-  formatTimer(timer) {
+  formatTimer(timer, row, column) {
     return (
       <Timer 
         key={timer.id}
@@ -136,6 +147,8 @@ export default class Timers extends Component {
         time={{
           time: timer.time
         }}
+        row={row.toString()}
+        column={column.toString()}
         colorScheme={this.state.colorScheme}
         onDestroy={this.destroyTimer.bind(this)}
       />
