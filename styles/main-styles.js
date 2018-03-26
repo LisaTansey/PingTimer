@@ -25,6 +25,7 @@ export default mainStyles = StyleSheet.create({
     height: '100%',
     width: '50%',
     alignItems: 'flex-start',
+    flexDirection: 'row',
   },
 
   right: {
@@ -37,6 +38,7 @@ export default mainStyles = StyleSheet.create({
   icon: {
     height: 40,
     width: 40,
+    paddingHorizontal: '20%',
     tintColor: Colors.appTertiary,
   },
 

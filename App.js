@@ -13,11 +13,8 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      colors: {
-        primary: 'white',
-        secondary: 'white',
-        tertiary: 'white',
-      },
+      colors: {},
+      layout: '',
     }
   }
   

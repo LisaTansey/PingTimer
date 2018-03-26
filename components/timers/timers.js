@@ -140,7 +140,7 @@ export default class Timers extends Component {
   formatTimer(timer, row, column) {
     return (
       <Timer 
-        key={timer.id}
+        key={timer.id.toString()}
         id={timer.id}
         name={timer.name}
         active={timer.active}
