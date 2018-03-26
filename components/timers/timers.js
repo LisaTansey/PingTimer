@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, ScrollView } from 'react-native'
 import Timer from './timer'
 import timerStyles from '../../styles/timer-styles'
-import TimerRows from '../../objects/timer-rows'
+import TimerRow from './timer-row'
 const TimerModel = require('../../models/timer-model')
 const SettingsModel = require('../../models/settings-model')
 const Dimensions = require('Dimensions')
@@ -11,30 +11,43 @@ export default class Timers extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      timers: new TimerRows(Dimensions.get('window')),
+      timers: [],
+      height: Dimensions.get('window').height,
+      width: Dimensions.get('window').width,
+      visibleNumber: parseInt(Dimensions.get('window').width / 124),
+      rows: [],
     }
   }
 
   async componentDidMount() {
     let data = await TimerModel.getAll()
-    let formattedData = []
+    let timers = []
     data.forEach(timer => {
-      formattedData.push(this.formatTimer(timer))
+      timers.push(this.formatTimer(timer))
     })
-    let timers = this.state.timers.initializeRows(formattedData) 
 
-    timers.setLayout(this.props.layout)
-    timers.setColors(this.props.colorScheme)
+    this.setState({ timers, 
+      layout: this.props.layout, 
+      colorScheme: this.props.colorScheme 
+    }) 
 
-    this.setState({ timers })
+    this.setState({ rows: this.initializeRows() })
+    this.setSwapListener()
+  } 
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.colors) {
+      this.setState({ colorScheme: nextProps.colorScheme })
+    } else if (nextProps.layout) {
+      this.setState({ layout: nextProps.layout })
+    }
+  }
+
+  setSwapListener() {
     Dimensions.addEventListener('change', () => {
       let timers = this.state.timers.swapOrientation()
       this.setState({ timers })
     })
-  } 
-
-  componentWillReceiveProps(nextProps) {
-     
   }
 
   componentWillUnmount() {
@@ -44,21 +57,62 @@ export default class Timers extends Component {
     })
   }
 
+  initializeRows(timers=this.state.timers) {
+    let visibleNumber = this.state.visibleNumber
+    let rows = []
+    for (i = 0; i < timers.length; i += visibleNumber) {
+      let row = <TimerRow 
+          visibleNumber={visibleNumber.toString()}
+        >
+          { timers.slice(i, (i + visibleNumber)) }
+        </TimerRow>
+      rows.push(row)
+    }
+    return rows
+  }
+
+  swapOrientation() {
+    const width = this.state.height
+    const height = this.state.width
+    this.setState({ height, width, visibleNumber: width / 124 })
+    let rows = this.initializeRows(this.timers)
+    this.setState({ rows })
+  }
+
   async addTimer() {
     let data = await TimerModel.create(this._blankTimer())
     const newTimer = this.formatTimer(data)
-    let timers = this.state.timers.addTimer(newTimer)
-    this.setState({ timers })
+    this.setState({ timers: [...this.state.timers, newTimer ]})
+    this.addToEnd(newTimer)
+  }
+
+  addToEnd(timer) {
+    let rows = this.state.rows
+    let lastRow = rows[this.state.rows.length - 1]
+    if (lastRow.props.children.length >= this.state.visibleNumber) {
+      rows.push(
+        <TimerRow visibleNumber={this.state.visibleNumber.toString()}>
+          { timer }
+        </TimerRow>
+      )
+    } else { 
+      let lastChildren = React.Children.toArray(lastRow.props.children)
+      lastChildren.push(timer) 
+      rows[this.state.rows.length - 1] = <TimerRow visibleNumber={this.state.visibleNumber}>
+        { lastChildren }
+        </TimerRow>
+      //rows[this.state.rows.length - 1] = lastRow
+    }
+    this.setState({ rows }) 
   }
   
-  destroyTimer(id) {
-    let timers = TimerRows.deleteTimer(id)
-    this.setState({ timers })
-    /*let timer = this.state.timers.find(timer => (timer.id === id))
-    let ind = this.state.timers.indexOf(timer)
-    let timers = this.state.timers
-    timers.splice(ind, 1)
-    this.setState({ timers })*/
+  destroyTimer(id, row, column) {
+    let rows = this.state.rows
+    let newTimers = rows.splice(row)
+    let flattendTimers = newTimers.map(row => row.props.children).flatten()
+    flattenedTimers.pop(column)
+    let newRows = this.initializeRows(flattenedTimers)
+    this.setState({ rows: [...this.state.rows, ...newRows] }) 
     TimerModel.destroy(id)
   }
 
@@ -72,6 +126,7 @@ export default class Timers extends Component {
         time={{
           time: timer.time
         }}
+        colorScheme={this.state.colorScheme}
         onDestroy={this.destroyTimer.bind(this)}
       />
     )
@@ -83,7 +138,7 @@ export default class Timers extends Component {
         style={timerStyles.timers}
         contentContainerStyle={timerStyles.thisShit}
       >
-        { this.state.timers.renderTimers() }
+        { this.state.rows }
       </ScrollView>
     )
   }

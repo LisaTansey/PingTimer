@@ -27,10 +27,6 @@ export default class TimerRows {
   }
 
   swapOrientation() {
-    const newWidth = this.height
-    this.height = this.width
-    this.width = newWidth
-    this.initializeRows(this.timers)
     return this
   }
 
@@ -50,24 +46,10 @@ export default class TimerRows {
   }
 
   renderTimers() {
-    let formattedRows = []
-    this.rows.forEach(row => {
-      formattedRows.push(
-        <View style={{ flexDirection: 'row' }}>
-          { row }
-        </View>
-      )
-    })
-    return formattedRows
   }
 
   _parseArray(timers, initial=[]) {
     let row = initial
-    let rows = []
-    for (i = 0; i < timers.length; i += this.visibleNumber) {
-      row = timers.slice(i, (i + this.visibleNumber))
-      rows.push(row)
-    }
     return rows
   }
 
