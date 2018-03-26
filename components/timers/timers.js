@@ -87,25 +87,35 @@ export default class Timers extends Component {
   }
 
   addToEnd(timer) {
-    let rows = this.state.rows
-    let lastRow = rows[this.state.rows.length - 1]
+    let lastRow = this.state.rows[this.state.rows.length - 1]
     if (lastRow.props.children.length >= this.state.visibleNumber) {
-      rows.push(
-        <TimerRow visibleNumber={this.state.visibleNumber.toString()}>
-          { timer }
-        </TimerRow>
-      )
+      this.addNewRow(timer)
     } else { 
-      let lastChildren = React.Children.toArray(lastRow.props.children)
-      lastChildren.push(timer) 
-      rows[this.state.rows.length - 1] = <TimerRow visibleNumber={this.state.visibleNumber}>
-        { lastChildren }
-        </TimerRow>
-      //rows[this.state.rows.length - 1] = lastRow
+      this.addToLastRow(timer)
     }
-    this.setState({ rows }) 
   }
-  
+
+  addNewRow(timers=[]) {
+    let rows = this.state.rows
+    rows.push(
+      <TimerRow visibleNumber={this.state.visibleNumber.toString()}>
+        { timers }
+      </TimerRow>
+    )
+    this.setState({ rows })
+  }
+
+  addToLastRow(timer) {
+    let rows = this.state.rows
+    let lastRow = rows[rows.length -1]
+    let lastChildren = React.Children.toArray(lastRow.props.children)
+    lastChildren.push(timer) 
+    rows[this.state.rows.length - 1] = <TimerRow visibleNumber={this.state.visibleNumber}>
+      { lastChildren }
+      </TimerRow>
+    this.setState({ rows })
+  }
+
   destroyTimer(id, row, column) {
     let rows = this.state.rows
     let newTimers = rows.splice(row)
